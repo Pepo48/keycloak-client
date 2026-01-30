@@ -66,6 +66,7 @@
         <central.publishing.plugin.version>0.7.0</central.publishing.plugin.version>
         <verifier.plugin.version>1.1</verifier.plugin.version>
         <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
+        <openapi-generator-maven-plugin.version>7.19.0</openapi-generator-maven-plugin.version>
 
         <!-- Surefire Settings -->
         <surefire.memory.Xms>512m</surefire.memory.Xms>
@@ -120,6 +121,7 @@
 
     <modules>
         <module>client-common-synced</module>
+        <module>admin-openapi</module>
         <module>admin-client</module>
         <module>authz-client</module>
         <module>policy-enforcer</module>

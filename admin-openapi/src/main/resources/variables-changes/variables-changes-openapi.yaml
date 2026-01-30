@@ -1,0 +1,547 @@
+---
+openapi: 3.1.0
+tags:
+- name: Clients (v2)
+  x-smallrye-profile-admin: ""
+components:
+  schemas:
+    Auth:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        method:
+          type: string
+        secret:
+          type: string
+        certificate:
+          type: string
+    ClaimRepresentation:
+      type: object
+      properties:
+        name:
+          type: boolean
+        username:
+          type: boolean
+        profile:
+          type: boolean
+        picture:
+          type: boolean
+        website:
+          type: boolean
+        email:
+          type: boolean
+        gender:
+          type: boolean
+        locale:
+          type: boolean
+        address:
+          type: boolean
+        phone:
+          type: boolean
+    ClientRepresentation:
+      type: object
+      properties:
+        clientId:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        protocol:
+          type: string
+        enabled:
+          type: boolean
+        appUrl:
+          type: string
+          pattern: ""
+        appRedirectUrls:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        loginFlows:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        auth:
+          $ref: "#/components/schemas/Auth"
+        webOrigins:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        roles:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        serviceAccount:
+          $ref: "#/components/schemas/ServiceAccount"
+    ComponentExportRepresentation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        providerId:
+          type: string
+        subType:
+          type: string
+        subComponents:
+          $ref: "#/components/schemas/MultivaluedHashMapStringComponentExportRepresentation"
+        config:
+          $ref: "#/components/schemas/MultivaluedHashMapStringString"
+    Composites:
+      type: object
+      properties:
+        realm:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        client:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        application:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          deprecated: true
+    DecisionEffect:
+      type: string
+      enum:
+      - PERMIT
+      - DENY
+    DecisionStrategy:
+      type: string
+      enum:
+      - AFFIRMATIVE
+      - UNANIMOUS
+      - CONSENSUS
+    ErrorRepresentation:
+      type: object
+      properties:
+        field:
+          type: string
+        errorMessage:
+          type: string
+        params:
+          type: array
+          items: {}
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorRepresentation"
+    GroupRepresentation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        path:
+          type: string
+        parentId:
+          type: string
+        subGroupCount:
+          type: integer
+          format: int64
+        subGroups:
+          type: array
+          items:
+            $ref: "#/components/schemas/GroupRepresentation"
+        attributes:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        realmRoles:
+          type: array
+          items:
+            type: string
+        clientRoles:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        access:
+          type: object
+          additionalProperties:
+            type: boolean
+    JsonNode:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        valueNode:
+          type: boolean
+        containerNode:
+          type: boolean
+        missingNode:
+          type: boolean
+        array:
+          type: boolean
+        object:
+          type: boolean
+        nodeType:
+          $ref: "#/components/schemas/JsonNodeType"
+        pojo:
+          type: boolean
+        number:
+          type: boolean
+        integralNumber:
+          type: boolean
+        floatingPointNumber:
+          type: boolean
+        short:
+          type: boolean
+        int:
+          type: boolean
+        long:
+          type: boolean
+        float:
+          type: boolean
+        double:
+          type: boolean
+        bigDecimal:
+          type: boolean
+        bigInteger:
+          type: boolean
+        textual:
+          type: boolean
+        boolean:
+          type: boolean
+        "null":
+          type: boolean
+        binary:
+          type: boolean
+    JsonNodeType:
+      type: string
+      enum:
+      - ARRAY
+      - BINARY
+      - BOOLEAN
+      - MISSING
+      - "NULL"
+      - NUMBER
+      - OBJECT
+      - POJO
+      - STRING
+    Logic:
+      type: string
+      enum:
+      - POSITIVE
+      - NEGATIVE
+    MultivaluedHashMapStringComponentExportRepresentation:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          $ref: "#/components/schemas/ComponentExportRepresentation"
+    MultivaluedHashMapStringString:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+    PolicyRepresentation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        policies:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        resources:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        scopes:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        logic:
+          $ref: "#/components/schemas/Logic"
+        decisionStrategy:
+          $ref: "#/components/schemas/DecisionStrategy"
+        owner:
+          type: string
+        resourceType:
+          type: string
+        resourcesData:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/ResourceRepresentation"
+        scopesData:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/ScopeRepresentation"
+        config:
+          type: object
+          additionalProperties:
+            type: string
+    PolicyResultRepresentation:
+      type: object
+      properties:
+        policy:
+          $ref: "#/components/schemas/PolicyRepresentation"
+        status:
+          $ref: "#/components/schemas/DecisionEffect"
+        associatedPolicies:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyResultRepresentation"
+        scopes:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        resourceType:
+          type: string
+    ResourceOwnerRepresentation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    ResourceRepresentation:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        uris:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        type:
+          type: string
+        scopes:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/ScopeRepresentation"
+        icon_uri:
+          type: string
+        owner:
+          type: object
+          readOnly: true
+          $ref: "#/components/schemas/ResourceOwnerRepresentation"
+        ownerManagedAccess:
+          type: boolean
+        displayName:
+          type: string
+        attributes:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        uri:
+          type: string
+          writeOnly: true
+          deprecated: true
+        scopesUma:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/ScopeRepresentation"
+    RoleRepresentation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        scopeParamRequired:
+          type: boolean
+          deprecated: true
+        composite:
+          type: boolean
+        composites:
+          $ref: "#/components/schemas/Composites"
+        clientRole:
+          type: boolean
+        containerId:
+          type: string
+        attributes:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+    ScopeMappingRepresentation:
+      type: object
+      properties:
+        self:
+          type: string
+        client:
+          type: string
+        clientTemplate:
+          type: string
+          deprecated: true
+        clientScope:
+          type: string
+        roles:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+    ScopeRepresentation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        iconUri:
+          type: string
+        policies:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyRepresentation"
+        resources:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResourceRepresentation"
+        displayName:
+          type: string
+    ServiceAccount:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        roles:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+paths:
+  /clients:
+    get:
+      operationId: getAllClients # TODO added by robin probably 'findAll'?
+      summary: Get all clients
+      description: Returns a list of all clients in the realm
+      tags:
+      - Clients (v2)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClientRepresentation"
+    post:
+      summary: Create a new client
+      description: Creates a new client in the realm
+      tags:
+      - Clients (v2)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientRepresentation"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /admin/api/v2/realms/{name}/clients/{id}:
+    get:
+      tags:
+      - Clients (v2)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientRepresentation"
+    put:
+      tags:
+      - Clients (v2)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientRepresentation"
+        required: true
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+      - Clients (v2)
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: "#/components/schemas/JsonNode"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientRepresentation"
+    delete:
+      tags:
+      - Clients (v2)
+      responses:
+        "204":
+          description: No Content
+    parameters:
+    - name: name
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+info:
+  title: Keycloak API
+  version: 999.0.0-SNAPSHOT
+servers:
+- url: https://localhost:8443
+  description: Auto generated value
+- url: https://0.0.0.0:8443
+  description: Auto generated value
+- url: https://localhost:8443/admin/api/v2/realms/{realm}
+  description: Just a test
+  variables:
+    realm:
+      default: master

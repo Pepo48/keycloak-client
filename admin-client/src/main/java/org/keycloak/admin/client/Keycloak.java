@@ -32,6 +32,7 @@ import org.keycloak.admin.client.resource.RealmsResource;
 import org.keycloak.admin.client.resource.ServerInfoResource;
 import org.keycloak.admin.client.spi.ResteasyClientProvider;
 import org.keycloak.admin.client.token.TokenManager;
+import org.keycloak.client.v2.invoker.ApiClient;
 
 import static org.keycloak.OAuth2Constants.PASSWORD;
 
@@ -239,5 +240,20 @@ public class Keycloak implements AutoCloseable {
      */
     public boolean isClosed() {
         return closed;
+    }
+
+    public Clients clients(String realmName) {
+        return new Clients(this, this.config, realmName);
+    }
+
+    public org.keycloak.client.v2.api.ClientsV2Api clients() {
+        String token = this.tokenManager().getAccessTokenString();
+
+        ApiClient apiClient = new ApiClient()
+            .setBasePath(config.getServerUrl())
+//        .setBasePath(config.getServerUrl() + "/admin/api/v2/realms/" + realmName)
+            .addDefaultHeader("Authorization", "Bearer " + token);
+
+        return new org.keycloak.client.v2.api.ClientsV2Api(apiClient);
     }
 }
