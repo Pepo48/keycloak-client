@@ -34,7 +34,9 @@ public class KeycloakContainersServerProvider implements KeycloakServerProvider 
                     String dockerImage = KEYCLOAK_IMAGE + ":" + keycloakVersion;
                     logger.infof("Starting Keycloak server based on testcontainers. Docker image: %s", dockerImage);
 
-                    keycloakContainer = new KeycloakContainer(dockerImage).useTls();
+                    keycloakContainer = new KeycloakContainer(dockerImage)
+                            .useTls()
+                            .withFeaturesEnabled("client-admin-api");
 
                     if (keycloakVersion.startsWith("24.0")) {
                         // Health probe like https://localhost:37267/health/started reset connections by default on Keycloak 24. So fallback to use the log message

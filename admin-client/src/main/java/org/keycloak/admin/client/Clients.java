@@ -5,6 +5,7 @@ import org.keycloak.client.v2.invoker.ApiClient;
 import org.keycloak.client.v2.invoker.ApiException;
 import org.keycloak.client.v2.model.JsonNode;
 
+import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.admin.client.resource.ClientsResource;
@@ -16,11 +17,13 @@ public class Clients {
   private final Keycloak keycloak;
   private final Config config;
   private final String realmName;
+  private final Client httpClient;
 
-  Clients(Keycloak keycloak, Config config, String realmName) {
+  Clients(Keycloak keycloak, Config config, String realmName, Client httpClient) {
     this.keycloak = keycloak;
     this.config = config;
     this.realmName = realmName;
+    this.httpClient = httpClient;
   }
 
   private ClientsResource legacyDelegate() {
@@ -80,9 +83,14 @@ public class Clients {
   public class V2 {
     private ApiClient getApiClient() {
       String token = keycloak.tokenManager().getAccessTokenString();
-      return new ApiClient()
+      ApiClient apiClient = new ApiClient()
           .setBasePath(config.getServerUrl())
           .addDefaultHeader("Authorization", "Bearer " + token);
+      // Reuse the same HTTP client (with SSL configuration) as the legacy admin client
+      if (httpClient != null) {
+        apiClient.setHttpClient(httpClient);
+      }
+      return apiClient;
     }
 
     /**

@@ -243,7 +243,7 @@ public class Keycloak implements AutoCloseable {
     }
 
     public Clients clients(String realmName) {
-        return new Clients(this, this.config, realmName);
+        return new Clients(this, this.config, realmName, this.client);
     }
 
     /**
@@ -255,6 +255,7 @@ public class Keycloak implements AutoCloseable {
 
         ApiClient apiClient = new ApiClient()
             .setBasePath(config.getServerUrl())
+            .setHttpClient(this.client)
             .addDefaultHeader("Authorization", "Bearer " + token);
 
         return new org.keycloak.client.v2.api.ClientsV2Api(apiClient);
