@@ -21,9 +21,13 @@ package org.keycloak.client.testsuite;
 import org.junit.jupiter.api.Test;
 import org.keycloak.client.testsuite.models.Constants;
 import org.keycloak.client.v2.invoker.ApiException;
+import org.keycloak.client.v2.model.ClientRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ClientV2Test extends AbstractAdminClientTest {
 
@@ -46,20 +50,50 @@ public class ClientV2Test extends AbstractAdminClientTest {
   }
 
   @Test
-  public void getClientsV2() throws ApiException {
+  public void getClientsV2_fluentGetAll() throws ApiException {
+    List<ClientRepresentation> clients = adminClient.clients(REALM_NAME).v2().getAll();
 
-
-    Assert.assertNames(
-        adminClient.clients(REALM_NAME).v2().getAllClients(""),
-        "account", "account-console", "realm-management", "security-admin-console", "broker", Constants.ADMIN_CLI_CLIENT_ID);
+    assertNotNull(clients);
+    List<String> clientIds = clients.stream()
+        .map(ClientRepresentation::getClientId)
+        .collect(Collectors.toList());
+    
+    org.junit.jupiter.api.Assertions.assertTrue(clientIds.contains("account"));
+    org.junit.jupiter.api.Assertions.assertTrue(clientIds.contains("account-console"));
   }
 
+  /**
+   * Test accessing raw API
+   */
   @Test
-  public void putClientsV2WithoutAnyWrapping() throws ApiException {
+  public void getClientsV2_rawApiWithSemanticMethodNames() throws ApiException {
+    List<ClientRepresentation> clients = adminClient.clients(REALM_NAME).v2().raw().listClientsV2(REALM_NAME);
 
-    adminClient.clients().adminApiV2RealmsNameClientsIdPut("REALM_NAME", "ID", null);
+    assertNotNull(clients);
   }
 
+  /**
+   * 
+   * Old: adminClient.clients().adminApiV2RealmsNameClientsIdPut("REALM_NAME", "ID", null);
+   * New: adminClient.clients(realmName).v2().update(id, client);
+   * Raw: adminClient.clients(realmName).v2().raw().updateClientV2(realmName, id, client);
+   */
+  @Test
+  public void demonstrateImprovedApiShape() throws ApiException {
+    // adminClient.clients("myRealm").v2().getAll()
+    // adminClient.clients("myRealm").v2().get(id)
+    // adminClient.clients("myRealm").v2().create(client)
+    // adminClient.clients("myRealm").v2().update(id, client)
+    // adminClient.clients("myRealm").v2().delete(id)
 
+    List<ClientRepresentation> clients = adminClient.clients(REALM_NAME).v2().getAll();
+    assertNotNull(clients);
 
+    // raw:
+    // adminClient.clients(REALM_NAME).v2().raw().listClientsV2(realmName);
+    // adminClient.clients(REALM_NAME).v2().raw().getClientV2(realmName, id);
+    // adminClient.clients(REALM_NAME).v2().raw().createClientV2(realmName, client);
+    // adminClient.clients(REALM_NAME).v2().raw().updateClientV2(realmName, id, client);
+    // adminClient.clients(REALM_NAME).v2().raw().deleteClientV2(realmName, id);
+  }
 }

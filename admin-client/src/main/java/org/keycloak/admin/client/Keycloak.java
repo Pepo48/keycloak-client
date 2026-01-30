@@ -246,12 +246,15 @@ public class Keycloak implements AutoCloseable {
         return new Clients(this, this.config, realmName);
     }
 
-    public org.keycloak.client.v2.api.ClientsV2Api clients() {
+    /**
+     * Returns the raw generated ClientsV2Api without realm context.
+     */
+    @Deprecated
+    public org.keycloak.client.v2.api.ClientsV2Api clientsV2Raw() {
         String token = this.tokenManager().getAccessTokenString();
 
         ApiClient apiClient = new ApiClient()
             .setBasePath(config.getServerUrl())
-//        .setBasePath(config.getServerUrl() + "/admin/api/v2/realms/" + realmName)
             .addDefaultHeader("Authorization", "Bearer " + token);
 
         return new org.keycloak.client.v2.api.ClientsV2Api(apiClient);
