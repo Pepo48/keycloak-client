@@ -3,7 +3,8 @@ package org.keycloak.admin.client;
 import org.keycloak.client.v2.api.ClientsV2Api;
 import org.keycloak.client.v2.invoker.ApiClient;
 import org.keycloak.client.v2.invoker.ApiException;
-import org.keycloak.client.v2.model.JsonNode;
+import org.keycloak.client.v2.model.OIDCClientRepresentation;
+import org.keycloak.client.v2.model.SAMLClientRepresentation;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response;
@@ -70,6 +71,8 @@ public class Clients {
 
   // V2 API - fluent wrapper
 
+  private static final String V2 = "v2";
+
   /**
    * Returns a V2 API accessor with fluent methods.
    */
@@ -103,43 +106,43 @@ public class Clients {
     /**
      * Lists all clients in the realm.
      */
-    public List<org.keycloak.client.v2.model.ClientRepresentation> getAll() throws ApiException {
-      return new ClientsV2Api(getApiClient()).listClientsV2(realmName);
+    public List<org.keycloak.client.v2.model.BaseClientRepresentation> getAll() throws ApiException {
+      return new ClientsV2Api(getApiClient()).getClients(realmName, V2);
     }
 
     /**
      * Gets a specific client by its ID.
      */
-    public org.keycloak.client.v2.model.ClientRepresentation get(String id) throws ApiException {
-      return new ClientsV2Api(getApiClient()).getClientV2(realmName, id);
+    public org.keycloak.client.v2.model.BaseClientRepresentation get(String id) throws ApiException {
+      return new ClientsV2Api(getApiClient()).getClient(realmName, V2, id);
     }
 
     /**
      * Creates a new client in the realm.
      */
-    public void create(org.keycloak.client.v2.model.ClientRepresentation client) throws ApiException {
-      new ClientsV2Api(getApiClient()).createClientV2(realmName, client);
+    public Object create(org.keycloak.client.v2.model.BaseClientRepresentation client) throws ApiException {
+      return new ClientsV2Api(getApiClient()).createClient(realmName, V2, client);
     }
 
     /**
-     * Fully updates an existing client.
+     * Creates or updates a client.
      */
-    public void update(String id, org.keycloak.client.v2.model.ClientRepresentation client) throws ApiException {
-      new ClientsV2Api(getApiClient()).updateClientV2(realmName, id, client);
+    public Object createOrUpdate(String id, org.keycloak.client.v2.model.BaseClientRepresentation client) throws ApiException {
+      return new ClientsV2Api(getApiClient()).createOrUpdateClient(realmName, V2, id, client);
     }
 
     /**
-     * Partially updates an existing client using JSON Merge Patch.
+     * Partially updates a client using JSON Merge Patch.
      */
-    public org.keycloak.client.v2.model.ClientRepresentation patch(String id, JsonNode patch) throws ApiException {
-      return new ClientsV2Api(getApiClient()).patchClientV2(realmName, id, patch);
+    public org.keycloak.client.v2.model.BaseClientRepresentation patch(String id, List<Object> patchOperations) throws ApiException {
+      return new ClientsV2Api(getApiClient()).patchClient(realmName, V2, id, patchOperations);
     }
 
     /**
      * Deletes a client from the realm.
      */
     public void delete(String id) throws ApiException {
-      new ClientsV2Api(getApiClient()).deleteClientV2(realmName, id);
+      new ClientsV2Api(getApiClient()).deleteClient(realmName, V2, id);
     }
   }
 }
